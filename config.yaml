@@ -1,0 +1,54 @@
+# YouTube Highlighter v2 Configuration
+
+# --- General Settings ---
+output_dir: "output"
+cache_dir: ".cache"
+
+# --- Video Processing ---
+video:
+  # Video quality to download: "highest", "lowest", "1080p", "720p", etc.
+  quality: "720p"
+  # Thumbnail size
+  thumbnail_width: 1280
+  thumbnail_height: 720
+
+# --- AI Summarization ---
+summarizer:
+  # Model from Hugging Face
+  model: "facebook/bart-large-cnn"
+  # Max length of the summary
+  max_length: 60
+  # Min length of the summary
+  min_length: 10
+
+# --- Segment Finding ---
+segment_finder:
+  # Number of seconds of context to include around a keyword
+  context_window: 5
+  # Default keywords to use if none are provided
+  default_keywords:
+    - "introduction"
+    - "conclusion"
+    - "demo"
+    - "important"
+
+# --- HTML Generation ---
+html:
+  # Title for the generated HTML page
+  title: "Video Highlights"
+
+# --- Transcript Download & Processing ---
+transcript:
+  # Preferred subtitle languages (in order of preference)
+  languages:
+    - "en"
+    - "en-US"
+    - "en-GB"
+  # Maximum number of download retries
+  max_retries: 3
+  # Delay between retries (seconds)
+  retry_delay: 2
+  # Enable auto-generated captions as fallback
+  allow_auto_captions: true
+  # Timeout for download operations (seconds)  
+  download_timeout: 120

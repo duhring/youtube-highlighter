@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated Highlights - YouTube Highlighter</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .nav-buttons {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+            margin: 0 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn.primary {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+        }
+        
+        .highlights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .highlight-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .highlight-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .highlight-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+            color: #fff;
+        }
+        
+        .highlight-card .timestamp {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        
+        .highlight-card .task-id {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8em;
+            font-family: monospace;
+            margin-bottom: 15px;
+        }
+        
+        .view-btn {
+            background: linear-gradient(135deg, #4CAF50, #8BC34A);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .view-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 50px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        .no-results h2 {
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .no-results p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Generated Highlights</h1>
+        
+        <div class="nav-buttons">
+            <a href="/" class="btn primary">Create New Highlights</a>
+        </div>
+        
+        {% if highlights %}
+            <div class="highlights-grid">
+                {% for highlight in highlights %}
+                    <div class="highlight-card">
+                        <h3>{{ highlight.name }}</h3>
+                        <div class="timestamp">📅 {{ highlight.formatted_time }}</div>
+                        <div class="task-id">🔗 Task ID: {{ highlight.task_id }}</div>
+                        <a href="{{ highlight.view_url }}" target="_blank" class="view-btn">
+                            🎬 View Highlights Page
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-results">
+                <h2>No Highlights Found</h2>
+                <p>You haven't generated any highlight pages yet.</p>
+                <a href="/" class="btn primary">Create Your First Highlights</a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

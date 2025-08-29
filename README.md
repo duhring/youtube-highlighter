@@ -17,6 +17,12 @@ YouTube Highlighter leverages artificial intelligence to analyze YouTube videos 
 - **CLI Support**: Command-line tools for automation and batch processing
 - **Dual Interface**: Choose between CLI for automation/scripting or web interface for user-friendly interaction
 
+![Input Cature](1-Input-capture.png)
+
+![Input Cature](2-Console.png)
+
+![Input Cature](3-Output.png)
+
 ## Use Cases
 
 - Content creators looking to repurpose long-form content into engaging shorts and highlight pages

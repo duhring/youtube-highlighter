@@ -1,0 +1,23 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=YouTube Highlighter
+Comment=Generate video highlights from YouTube transcripts using AI
+GenericName=Video Highlight Generator
+Keywords=youtube;video;highlights;ai;transcripts;
+Icon=applications-multimedia
+Exec=bash -c "cd '%k' && ./launch.sh"
+Path=%k
+Terminal=true
+StartupNotify=true
+Categories=AudioVideo;Video;Player;
+MimeType=text/vtt;text/srt;
+Actions=CLI;Web;
+
+[Desktop Action CLI]
+Name=CLI Interface
+Exec=bash -c "cd '%k' && source venv/bin/activate && export PYTHONPATH=. && python app/cli.py --help && read -p 'Press Enter to continue...'"
+
+[Desktop Action Web]  
+Name=Web Interface
+Exec=bash -c "cd '%k' && ./launch.sh"

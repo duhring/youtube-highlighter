@@ -1,5 +1,13 @@
 import re
 import logging
+import sys
+import os
+from pathlib import Path
+
+# Add project root to Python path
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify
 from app.main import create_highlights
 from app.config import get_setting
@@ -232,6 +240,40 @@ def detect_transcript_format():
     except Exception as e:
         logger.error(f"Error in format detection API: {e}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/health')
+def health_check():
+    """Health check endpoint for monitoring and validation"""
+    try:
+        import torch
+        import moviepy.editor
+        import transformers
+        from app.config import get_setting
+        
+        health_info = {
+            'status': 'healthy',
+            'timestamp': datetime.now().isoformat(),
+            'version': '2.0.0',
+            'components': {
+                'torch': torch.__version__ if hasattr(torch, '__version__') else 'available',
+                'moviepy': 'available',
+                'transformers': transformers.__version__ if hasattr(transformers, '__version__') else 'available',
+                'config': 'loaded' if get_setting('output_dir') else 'error'
+            },
+            'system': {
+                'python': sys.version.split()[0],
+                'platform': os.name
+            }
+        }
+        
+        return jsonify(health_info)
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'unhealthy',
+            'timestamp': datetime.now().isoformat(),
+            'error': str(e)
+        }), 500
 
 @app.route('/', methods=['GET', 'POST'])
 def index():

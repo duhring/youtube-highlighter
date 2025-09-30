@@ -52,3 +52,10 @@ transcript:
   allow_auto_captions: true
   # Timeout for download operations (seconds)  
   download_timeout: 120
+
+# --- Web Server ---
+web:
+  # Port for the web interface (5432 avoids conflicts with common services)
+  port: 5432
+  # Enable debug mode
+  debug: true

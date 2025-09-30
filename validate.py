@@ -100,7 +100,7 @@ def check_critical_modules() -> Dict[str, bool]:
         'pytube': 'PyTube',
         'yt_dlp': 'yt-dlp',
         'requests': 'Requests',
-        'beautifulsoup4': 'BeautifulSoup4',
+        'bs4': 'BeautifulSoup4',
         'PIL': 'Pillow',
         'numpy': 'NumPy',
         'yaml': 'PyYAML',
@@ -133,7 +133,8 @@ def check_system_commands() -> Dict[str, bool]:
                                   capture_output=True, 
                                   text=True, 
                                   timeout=5)
-            if result.returncode == 0:
+            # FFmpeg outputs version to stderr and returns exit code 8, but this is normal
+            if result.returncode == 0 or (cmd == 'ffmpeg' and 'ffmpeg version' in result.stderr):
                 print_status(f"{description}: Available", "success")
                 results[cmd] = True
             else:

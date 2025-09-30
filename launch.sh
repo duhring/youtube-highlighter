@@ -59,14 +59,45 @@ detect_os() {
     esac
 }
 
+# Function to get configured port
+get_port() {
+    # Check environment variable first
+    if [[ -n "$YOUTUBE_HIGHLIGHTER_PORT" ]]; then
+        echo "$YOUTUBE_HIGHLIGHTER_PORT"
+        return
+    fi
+    
+    # Try to read from config.yaml (use activated python if available)
+    if [[ -f "config.yaml" ]]; then
+        local python_cmd="python"
+        if command -v python3 &> /dev/null; then
+            python_cmd="python3"
+        fi
+        
+        local port=$($python_cmd -c "
+try:
+    import yaml
+    with open('config.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+    print(config.get('web', {}).get('port', 5000))
+except:
+    print(5000)
+" 2>/dev/null)
+        echo "${port:-5000}"
+    else
+        echo "5000"
+    fi
+}
+
 # Function to open browser after delay
 open_browser() {
+    local port=$(get_port)
     sleep 3
     print_info "Opening browser..."
     if command -v $BROWSER_CMD &> /dev/null; then
-        $BROWSER_CMD "http://localhost:5000" 2>/dev/null &
+        $BROWSER_CMD "http://localhost:$port" 2>/dev/null &
     else
-        print_warning "Could not auto-open browser. Please visit: http://localhost:5000"
+        print_warning "Could not auto-open browser. Please visit: http://localhost:$port"
     fi
 }
 
@@ -90,7 +121,7 @@ check_requirements() {
 
 # Setup if needed
 run_setup_if_needed() {
-    if [[ ! -d "venv" ]]; then
+    if [[ ! -d "venv" ]] && [[ ! -d "venv311" ]]; then
         print_warning "First time setup required!"
         print_info "Running automated setup..."
         echo
@@ -117,7 +148,19 @@ run_setup_if_needed() {
 # Activate environment and run health check
 prepare_environment() {
     print_info "Activating virtual environment..."
-    source venv/bin/activate
+    
+    # Use existing venv311 if it exists and has working dependencies
+    if [[ -d "venv311" ]]; then
+        source venv311/bin/activate
+        print_info "Using existing venv311 environment"
+    elif [[ -d "venv" ]]; then
+        source venv/bin/activate
+        print_info "Using venv environment"
+    else
+        print_error "No virtual environment found!"
+        exit 1
+    fi
+    
     export PYTHONPATH=.
     
     # Quick health check
@@ -164,16 +207,17 @@ main() {
     open_browser &
     
     # Show launch info
+    local port=$(get_port)
     print_success "🚀 Starting YouTube Highlighter web server..."
-    print_success "🌐 Browser will open automatically at: http://localhost:5000"
+    print_success "🌐 Browser will open automatically at: http://localhost:$port"
     print_warning "📋 Keep this terminal window open while using the application"
     print_warning "🛑 Press Ctrl+C to stop the server"
     echo
     
     # Additional helpful info
     print_info "Quick links:"
-    echo "  • Web Interface: http://localhost:5000"
-    echo "  • Health Check:  http://localhost:5000/health"
+    echo "  • Web Interface: http://localhost:$port"
+    echo "  • Health Check:  http://localhost:$port/health"
     echo "  • Stop Server:   Ctrl+C in this window"
     echo
     
@@ -223,7 +267,11 @@ case "${1:-}" in
         detect_os
         check_requirements
         if [[ -f "validate.py" ]]; then
-            source venv/bin/activate 2>/dev/null || true
+            if [[ -d "venv311" ]]; then
+                source venv311/bin/activate 2>/dev/null || true
+            else
+                source venv/bin/activate 2>/dev/null || true
+            fi
             python3 validate.py
         else
             print_warning "validate.py not found, running basic checks..."
@@ -236,7 +284,11 @@ case "${1:-}" in
         detect_os
         check_requirements
         run_setup_if_needed
-        source venv/bin/activate
+        if [[ -d "venv311" ]]; then
+            source venv311/bin/activate
+        else
+            source venv/bin/activate
+        fi
         export PYTHONPATH=.
         python app/cli.py --help
         echo

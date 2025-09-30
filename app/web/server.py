@@ -445,4 +445,14 @@ def serve_output(filename):
     return send_from_directory(str(output_dir), filename)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5002)
+    # Get port from environment variable, config, or default to 5000
+    port = int(os.environ.get('YOUTUBE_HIGHLIGHTER_PORT', 
+                             get_setting('web.port', 5000)))
+    
+    # Get debug setting from config
+    debug = get_setting('web.debug', True)
+    
+    print(f"🚀 Starting YouTube Highlighter web server on port {port}")
+    print(f"🌐 Open your browser to: http://localhost:{port}")
+    
+    app.run(debug=debug, port=port, host='0.0.0.0')
